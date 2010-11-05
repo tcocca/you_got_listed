@@ -5,12 +5,18 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "you_got_listed"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{ruby api wrapper for you got listings}
+    gem.description = %Q{Ruby API wrapper for yougotlistings.com built with httparty}
     gem.email = "tom.cocca@gmail.com"
     gem.homepage = "http://github.com/tcocca/you_got_listed"
-    gem.authors = ["tcocca"]
+    gem.authors = ["Tom Cocca"]
+    gem.add_dependency "httparty", ">= 0.6.1"
+    gem.add_dependency "hashie", ">= 0.4.0"
+    gem.add_dependency "rash", ">= 0.2.0"
+    gem.add_dependency "will_paginate", ">= 2.3.4"
     gem.add_development_dependency "rspec", ">= 1.2.9"
+    gem.add_development_dependency "webmock", ">= 1.3.4"
+    gem.add_development_dependency "vcr", ">= 1.1.2"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
