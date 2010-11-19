@@ -7,11 +7,11 @@ describe YouGotListed::Client do
   end
   
   it "should set the api_key" do
-    @ygl.api_key.should == YGL_API_KEY
+    @ygl.class.default_params.should == {:key => YGL_API_KEY}
   end
   
   it "should set the base uri" do
-    @ygl.class.base_uri.should == "http://test.yougotlistings.com"
+    @ygl.class.base_uri.should == "https://yougotlistings.com/api"
   end
   
 end

@@ -14,10 +14,13 @@ def mock_get(base_uri, method, response_fixture, params = {})
 end
 
 def mocked_response(response_fixture)
-  File.read(File.join(File.dirname(__FILE__), '/../fixtures/responses', "#{response_fixture}.json"))
+  File.read(File.join(File.dirname(__FILE__), '/../fixtures/responses', "#{response_fixture}"))
 end
 
 def httparty_get(base_uri, method, response_fixture, params = {})
   mock_get(base_uri, method, response_fixture, params)
-  HTTParty.get url, :format => :json
+  url = base_uri + method
+  VCR.use_cassette(method.gsub('/', '_')) do
+    HTTParty.get url, :format => :xml
+  end
 end
