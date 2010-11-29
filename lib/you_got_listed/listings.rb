@@ -17,7 +17,7 @@ module YouGotListed
     
     def find_by_id(listing_id)
       params = {:listing_id => listing_id, :detail_level => 2}
-      response = SearchResponse.new(self.client.class.get('/rentals/search.php', :query => params), self.client)
+      response = SearchResponse.new(self.client.class.get('/rentals/search.php', :query => params), self.client, 20, false)
       (response.success? && response.properties.size > 0) ? response.properties.first : nil
     end
     
@@ -45,8 +45,8 @@ module YouGotListed
       
       attr_accessor :limit, :paginator_cache, :client
       
-      def initialize(response, client, limit = 20)
-        super(response)
+      def initialize(response, client, limit = 20, raise_error = true)
+        super(response, raise_error)
         self.limit = limit
         self.client = client
       end

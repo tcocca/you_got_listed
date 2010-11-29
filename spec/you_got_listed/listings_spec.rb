@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe YouGotListed::Listing do
+describe YouGotListed::Listings do
   
   before do
     @ygl = new_ygl
@@ -46,7 +46,7 @@ describe YouGotListed::Listing do
       it { @listing.should be_kind_of(YouGotListed::Listing) }
     end
     
-    context "invalid id" do
+    context "missing id" do
       before do
         VCR.use_cassette('listings.find_by_id_missing') do
           @listing = @listings.find_by_id('CAM-111-382')
@@ -54,6 +54,23 @@ describe YouGotListed::Listing do
       end
       
       it { @listing.should be_nil }
+    end
+    
+    context "invalid id" do
+      it "should not raise an exception" do
+        lambda {
+          VCR.use_cassette('listings.find_by_id_invalid') do
+            @listing = @listings.find_by_id('CAM')
+          end
+        }.should_not raise_exception
+      end
+      
+      it "should be nil" do
+        VCR.use_cassette('listings.find_by_id_invalid') do
+          @listing = @listings.find_by_id('CAM')
+        end
+        @listing.should be_nil
+      end
     end
   end
   
