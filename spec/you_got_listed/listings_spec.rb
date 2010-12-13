@@ -35,6 +35,18 @@ describe YouGotListed::Listings do
     end
   end
   
+  context "featured" do
+    before do 
+      VCR.use_cassette('listings.featured') do
+        @response = @listings.featured
+      end
+    end
+    
+    it "should only return featured properties" do
+      #@response.properties.find_all{|p| p.features && p.features.feature.include?('Featured Rentals')}.size.should == @response.properties.size
+    end
+  end
+  
   context "find_by_id" do
     context "valid id" do
       before do

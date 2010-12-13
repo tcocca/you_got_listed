@@ -10,8 +10,12 @@ module YouGotListed
       SearchResponse.new(self.client.class.get('/rentals/search.php', :query => params), self.client, params[:page_count])
     end
     
-    def featured(params = {})
-      #params.merge!(:featured => 1)
+    def featured(params = {}, featured_tag = 'Featured Rentals')
+      if params[:tags].blank?
+        params[:tags] = featured_tag
+      else
+        params[:tags] += (params[:tags].ends_with?(',') ? featured_tag : ",#{featured_tag}")
+      end
       search(params)
     end
     
