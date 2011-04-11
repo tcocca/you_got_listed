@@ -19,5 +19,7 @@ rdoc
 pkg
 
 ## PROJECT::SPECIFIC
+Gemfile.lock
+*.gem
 spec/you_got_listed_api_key.yml
 spec/fixtures/vcr_cassettes/*.yml
