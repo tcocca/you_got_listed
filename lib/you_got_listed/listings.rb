@@ -28,10 +28,9 @@ module YouGotListed
     def find_all(params = {})
       params[:page_count] ||= 20
       all_listings = []
-      
       response = search(params)
       if response.success?
-        all_listings << response.ygl_response.properties
+        all_listings << response.properties
         total_pages = (response.ygl_response.total.to_i/params[:page_count].to_f).ceil
         if total_pages > 1
           (2..total_pages).each do |page_num|
@@ -41,6 +40,16 @@ module YouGotListed
             end
           end
         end
+      end
+      all_listings.flatten
+    end
+    
+    def find_all_by_ids(listing_ids)
+      listing_ids = listing_ids.split(',') if listing_ids.is_a?(String)
+      all_listings = []
+      listing_ids.in_groups_of(500, false).each_with_index do |group, index|
+        group.delete_if{|x| x.nil?}
+        all_listings << find_all({:listing_ids => group.join(','), :page_count => 500, :page_index => (index + 1)})
       end
       all_listings.flatten
     end

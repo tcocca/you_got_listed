@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.add_dependency "httparty", ">= 0.6.1"
   s.add_dependency "rash", ">= 0.3.0"
   s.add_dependency "will_paginate", ">= 2.3.4"
-  s.add_dependency "activesupport"
+  s.add_dependency "activesupport", "~> 2.3"
   s.add_development_dependency "rspec", ">= 2.5.0"
   s.add_development_dependency "webmock", ">= 1.6.2"
   s.add_development_dependency "vcr", ">= 1.8.0"
