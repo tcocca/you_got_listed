@@ -77,6 +77,10 @@ module YouGotListed
         props
       end
       
+      def mls_results?
+        @has_mls_properties ||= properties.any?{|property| property.mls_listing?}
+      end
+      
       def paginator
         paginator_cache if paginator_cache
         self.paginator_cache = WillPaginate::Collection.create(

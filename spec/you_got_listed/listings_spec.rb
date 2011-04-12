@@ -35,6 +35,19 @@ describe YouGotListed::Listings do
     end
   end
   
+  context "mls_search" do
+    before do
+      VCR.use_cassette('listings.mls_search') do
+        @response = @listings.search(:include_mls => "1")
+        @response.properties.first.stub!(:source).and_return('MLS')
+      end
+    end
+    
+    context "search response" do
+      it { @response.mls_results?.should be_true }
+    end
+  end
+  
   context "featured" do
     before do 
       VCR.use_cassette('listings.featured') do

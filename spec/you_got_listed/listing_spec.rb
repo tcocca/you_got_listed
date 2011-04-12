@@ -61,4 +61,14 @@ describe YouGotListed::Listing do
     end
   end
   
+  context "mls_listing" do
+    before do
+      @listing = YouGotListed::Listing.new(valid_listing_rash.merge(:source => 'MLS'), @ygl)
+    end
+    
+    it "should be a mls_listing" do
+      @listing.mls_listing?.should be_true
+    end
+  end
+  
 end

@@ -51,5 +51,9 @@ module YouGotListed
       self.photos.photo unless self.photos.blank? || self.photos.photo.blank?
     end
     
+    def mls_listing?
+      source && source == "MLS"
+    end
+    
   end
 end
