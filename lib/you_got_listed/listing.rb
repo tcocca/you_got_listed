@@ -6,7 +6,9 @@ module YouGotListed
     def initialize(listing, client)
       listing.each do |key, value|
         self.instance_variable_set('@'+key, value)
-        self.class.send(:define_method, key, proc{self.instance_variable_get("@#{key}")})
+        unless ["latitude", "longitude"].include?(key)
+          self.class.send(:define_method, key, proc{self.instance_variable_get("@#{key}")})
+        end
       end
       self.client = client
     end
@@ -51,8 +53,20 @@ module YouGotListed
       self.photos.photo unless self.photos.blank? || self.photos.photo.blank?
     end
     
+    def main_picture
+      pictures.first if pictures
+    end
+    
     def mls_listing?
       source && source == "MLS"
+    end
+    
+    def latitude
+      @latitude.to_f unless @latitude.blank?
+    end
+    
+    def longitude
+      @longitude.to_f unless @longitude.blank?
     end
     
   end

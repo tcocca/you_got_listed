@@ -71,4 +71,40 @@ describe YouGotListed::Listing do
     end
   end
   
+  context "main_picture" do
+    it "should return the first photo" do
+      @listing.main_picture.should == @listing.pictures.first
+      @listing.main_picture.should == "http://yougotlistings.com/photos/AC-000-103/500141.jpg"
+    end
+    
+    it "should return nil if no pictures" do
+      @listing.stub!(:pictures).and_return(nil)
+      @listing.main_picture.should be_nil
+    end
+  end
+  
+  context "latitude" do
+    it "should return a float" do
+      @listing.latitude.should be_kind_of(Float)
+      @listing.latitude.should == 42.346182
+    end
+    
+    it "should return nil if blank" do
+      @listing = YouGotListed::Listing.new(valid_listing_rash.merge(:latitude => ''), @ygl)
+      @listing.latitude.should be_nil
+    end
+  end
+  
+  context "longitude" do
+    it "should return a float" do
+      @listing.longitude.should be_kind_of(Float)
+      @listing.longitude.should == -71.104427
+    end
+    
+    it "should return nil if blank" do
+      @listing = YouGotListed::Listing.new(valid_listing_rash.merge(:longitude => ''), @ygl)
+      @listing.longitude.should be_nil
+    end
+  end
+  
 end
