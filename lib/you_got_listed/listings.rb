@@ -44,14 +44,28 @@ module YouGotListed
       all_listings.flatten
     end
     
-    def find_all_by_ids(listing_ids)
+    def find_all_by_ids(listing_ids, include_off_market = true)
       listing_ids = listing_ids.split(',') if listing_ids.is_a?(String)
+      mls_ids = []
+      ygl_ids = []
       all_listings = []
-      listing_ids.in_groups_of(500, false).each_with_index do |group, index|
+      listing_ids.each do |list_id|
+        if list_id =~ /[A-Z]{3}-[0-9]{3}-[0-9]{3}/
+          ygl_ids << list_id
+        else
+          mls_ids << list_id
+        end
+      end
+      ygl_ids.in_groups_of(500, false).each_with_index do |group, index|
+        search_params = {:listing_ids => group.join(','), :page_count => 500, :page_index => (index + 1)}
+        search_params[:include_off_market] = 1 if include_off_market
         group.delete_if{|x| x.nil?}
         all_listings << find_all({:listing_ids => group.join(','), :page_count => 500, :page_index => (index + 1)})
       end
-      all_listings.flatten
+      mls_ids.each do |mls_id|
+        all_listings << find_by_id(mls_id)
+      end
+      all_listings.compact.flatten
     end
     
     class SearchResponse < YouGotListed::Response

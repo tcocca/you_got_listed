@@ -26,8 +26,11 @@ describe YouGotListed::Agent do
   
   context "successful find" do
     before do
+      VCR.use_cassette('agent.find_all') do
+        @valid_agent_id = @agent.find_all.agents.agent.first.id
+      end
       VCR.use_cassette('agent.find') do
-        @response = @agent.find('AG-001-046')
+        @response = @agent.find(@valid_agent_id)
       end
     end
     
@@ -45,7 +48,7 @@ describe YouGotListed::Agent do
     it "should raise an exception" do
       lambda {
         VCR.use_cassette('agent.find.error') do
-          @response = @agent.find('AG-001-04999')
+          @response = @agent.find('AG-001-0499957')
         end
       }.should raise_exception(YouGotListed::Error, "YouGotListed Error: Invalid user id. (code: 301)")
     end
@@ -53,8 +56,11 @@ describe YouGotListed::Agent do
   
   context "successful find_by_id" do
     before do
+      VCR.use_cassette('agent.find_all') do
+        @valid_agent_id = @agent.find_all.agents.agent.first.id
+      end
       VCR.use_cassette('agent.find') do
-        @response = @agent.find_by_id('AG-001-046')
+        @response = @agent.find_by_id(@valid_agent_id)
       end
     end
     
@@ -72,14 +78,14 @@ describe YouGotListed::Agent do
     it "should raise an exception" do
       lambda {
         VCR.use_cassette('agent.find.error') do
-          @response = @agent.find_by_id('AG-001-04999')
+          @response = @agent.find_by_id('AG-001-0499957')
         end
       }.should_not raise_exception
     end
     
     it "should not be a success" do
       VCR.use_cassette('agent.find.error') do
-        @response = @agent.find_by_id('AG-001-04999')
+        @response = @agent.find_by_id('AG-001-0499957')
       end
       @response.success?.should be_false
     end

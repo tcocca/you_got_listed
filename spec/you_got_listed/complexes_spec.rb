@@ -38,8 +38,11 @@ describe YouGotListed::Complexes do
   context "find_by_id" do
     context "valid id" do
       before do
+        VCR.use_cassette('complexes.search') do
+          @valid_complex_id = @complexes.search.property_complexes.first.id
+        end
         VCR.use_cassette('complexes.find_by_id') do
-          @complex = @complexes.find_by_id('CP-000-677')
+          @complex = @complexes.find_by_id(@valid_complex_id)
         end
       end
       
@@ -49,7 +52,7 @@ describe YouGotListed::Complexes do
     context "missing id" do
       before do
         VCR.use_cassette('complexes.find_by_id_missing') do
-          @complex = @complexes.find_by_id('CAM-111-382')
+          @complex = @complexes.find_by_id('CSM-111-382')
         end
       end
       
