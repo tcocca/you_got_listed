@@ -1,6 +1,208 @@
 = you_got_listed
 
-Description goes here.
+YouGotListed is a ruby gem that wraps the YouGotListings api.  YouGotListed is built on top of HTTParty and Rash (a Hashie::Mash extension).
+
+You must have access to the YouGotListings API via an api key.
+
+Currently the gem supports a subset of the full YouGotListings api and is READ-ONLY wrapper with the exception of creating Leads.
+
+YouGotListings API documentation can be found here: http://www.yougotlistings.com/wiki/index.php/Developers
+
+
+== Installation
+
+  gem install you_got_listed
+
+In a rails 2.3.x app
+
+  config.gem 'you_got_listed'
+
+
+== Usage
+
+Responses all come back as Hashie::Rash objects (see http://github.com/tcocca/rash).
+
+HTTParty parsed the xml into a Hash and Hashie::Rash will convert all keys to underscored names from camel case and then makes the keys accessible as methods.
+
+
+=== Creating the YouGotListed Client
+
+A client object is necessary for each request type.  The client is the base class that performs all of the operations, it requires your api key.
+
+  @ygl = YouGotListed::Client.new('you_api_key')
+
+** For all operations the "key" required parameter is automatically passed so you never need to worry about this parameter as the client class includes it by default.
+
+=== Searching Accounts
+
+To find all of the accounts that your API key can access call #search off the Accounts class:
+
+  @accounts = YouGotListed::Accounts.new(@ygl)
+  @results = @accounts.search
+
+The search method takes an optional hash of options that can be found here:  http://www.yougotlistings.com/wiki/index.php/Account_API
+Pass the options in the following format:
+
+  @results = @accounts.search(:page_count => 25, :page_index => 2)
+
+The key names are the same as the param name.
+
+== Searching for Agents
+
+  @agents = YouGotListed::Agent.new(@ygl)
+
+The YouGotListed::Agent class has 3 methods:
+
+See the Documentation here: http://www.yougotlistings.com/wiki/index.php/Agents_API
+
+#find_all Will return all agents belonging to your accounts, there are not params required.
+
+  @result = @agents.find_all
+
+#find : YouGotListed::Agent#find takes 1 argument an agent_id.  The operation will raise an error if the api returns an error
+
+  @result = @agents.find(1)
+
+#find_by_id : YouGotListed::Agent#find_by_id is the same as #find however it will not raise an error.
+
+  @result = @agents.find_by_id(1)
+
+
+== Creating a Lead
+
+The YouGotListed::Lead class has 2 methods to create a lead in the YouGotListings system: http://www.yougotlistings.com/wiki/index.php/Leads_Insert_API
+
+#create will insert a lead and will NOT raise an error if the api returns one
+
+#create! is the exact same by will raise an error
+
+  @leads = YouGotListed::Lead.new(@ygl)
+  @leads.create(:first_name => 'Test', :last_name => 'Lead', :email => 'test@lead.com')
+
+
+== Searching for Complexes
+
+See the API documentation: http://www.yougotlistings.com/wiki/index.php/Complexes_Search_API
+
+  @complexes = YouGotListed::Complexes.new(@ygl)
+
+There are two methods in the Complexes class: #search and #find_by_id
+
+Fist off, searching:  The #search method takes an optional hash of params.  The keys/values directly correspond to the api documentation
+  
+  @results = @complexes.search
+  @results = @complexes.search(:cities => 'Boston')
+
+
+The results from complex methods return a custom YouGotListed::Complexes::SearchResponse which inherits from the standard YouGotListed::Response.  The YouGotListed::Complexes::SearchResponse provides a few helper methods:
+
+  @results.property_complexes # => Returns an array of YouGotListed::Complex objects (see below)
+  @results.paginator # => Returns a WillPaginate::Collection object for the response.  The collection is the #property_complexes array that is returned.
+
+
+The other methods to access complexes is #find_by_id
+
+  @complex = @complexes.find_by_id('BOS-001-001')
+
+#find_by_id returns either a single YouGotListed::Complex object or nil, there is no response object.
+
+
+== YouGotListed::Complex
+
+The YouGotListed::Complex takes a Hashie::Rash object and turns it into a first level object.  Each key in that hash is turned into an instance variable and a getter is defined for the key so that you can use the methods in others.  It also takes a second param, a YouGotListed::Client object. The class provides 3 helper methods:
+
+#properties - Returns an array of YouGotListed::Listing objects (see below)
+#pictures - Returns an array of photo urls for the complex
+#find_address - Takes an address_id for and returns the corresponding address object. Addresses are tied to the complex but properties for the complex just return an address_id, so this is how we tie the address information to the property
+
+
+== Searching for Listings
+
+  @listings = YouGotListed::Listings.new(@ygl)
+  
+There are a number of ways to search for / find listings, reference documentation here: http://www.yougotlistings.com/wiki/index.php/Listings_API
+
+#search - Takes an optional hash of parameters, keys and values correspond to the documentation above
+
+  @results = @listings.search(:city_neighborhood => 'Boston:Back Bay')
+
+#featured - Takes 2 params (both optional).  The first is a params hash (same as search), the second is the 'Featured Tag' in the system.  The default is "Featured Rentals"
+
+  @results = @listings.featured
+  @results = @listings.featured(:page_count => 30)
+  @results = @listings.featured({}, 'Featured Listings') # only changing the featured tag
+
+The reason that the featured tag is second is for pagination, you must pass the :page_index through and I did not want to have to pass the default tag first, so that is why the options hash is first (I would not be completely opposed to changing this however, if somebody has a better option).
+
+Both #search and #featured return a custom YouGotListed::Listings::SearchResponse class that inherits from YouGotListed::Response.  This class provides 3 additional methods:
+
+#properties - returns an array of YouGotListed::Listing objects (see below)
+#paginator - returns a WillPaginate::Collection object (the collection is the properties array)
+#mls_results? - returns true if any of the properties have a source of 'MLS'
+
+
+There are 3 other methods for accessing listings:
+
+#find_by_id - takes an id and returns either a YouGotListed::Listing or nil
+
+  @listings.find_by_id('CAM-001-002')
+
+#find_all - takes a params hash just like search but will iterate over all pages of the results and return a single array of YouGotListed::Listing objects
+
+#find_all_by_ids - works the sames as find_all but will find the listings by IDs.  Takes 2 params.  First is either an array or comma separated string of listing_ids.  The second (optional, defaults to true) is a boolean to return off market listings.
+
+  @listings.find_all_by_ids(['CAM-001-001', 'CAM-001-002'])
+
+Again, this method iterates over all the pages of results and returns a single array of YouGotListed::Listing objects.
+
+
+== YouGotListed::Listing
+
+The YouGotListed::Listing class is similar to YouGotListed::Complex, it takes a Hashie::Rash object for a listing and provides some additional methods.
+
+#town_neighborhood - returns a string of "#{city} - #{neighborhood}" useful for display purposes, if neighborhood is blank it will just return "#{city}"
+#city_neighborhood - return a string of ""#{city}:#{neighborhood}", if neighborhood is blank it will only return "#{city}".  This method is useful because to search for listings in a location you must pass the location in this format.
+#mls_listing? - returns true if the source is "MLS"
+#latitude - returns the latitude for the property except as a float instead of a string
+#longitude - returns the longitude for the property except as a float instead of a string
+#pictures - returns an array of photo urls for the property, if there are no photos it returns nil
+#main_picture - returns the first photo url or nil if there are none
+
+#similar_listings - This method performs a search and returns an array for YouGotListed::Listing objects based on the following criteria
+
+  :min_rent => self.price.to_i * 0.9,
+  :max_rent => self.price.to_i * 1.1,
+  :min_bed => ((self.bedrooms.to_i - 1) <= 0 ? 0 : (self.bedrooms.to_i - 1)),
+  :max_bed => self.bedrooms.to_i + 1,
+  :baths => [(self.baths.to_i - 1), self.baths, (self.baths.to_i - 1)].join(','),
+  :city_neighborhood => self.city_neighborhood
+
+You can also pass a limit to the similar_listings method, the default is 6 properties (max) returned.
+
+  @property.similar_listings(10)
+
+** The method actually search for limit + 1 listings and returns the first 6 (there is no way to exclude an ID from the search so we need to pull limit + 1 in case the listing that you are on is returned so we can filter that out and still provide the number of listings you requested).
+
+
+== Extending YouGotListed::Listing
+Another benefit to this YouGotListed::Listing class is that in your app you can open the class again and add more methods if you wish.  For example create a file:  RAILS_ROOT/lib/ygl_extensions.rb with the following:
+
+  module YouGotListed
+    class Listing
+      
+      def address
+        addr = ""
+        addr = "#{street_number} " unless street_number.blank?
+        addr += "#{street_name}" unless street_name.blank?
+        addr += ", Unit #{unit}" unless unit.blank? || unit == "NULL"
+        addr
+      end
+      
+    end
+  end
+
+and add require 'ygl_extensions' to your config/environment.rb file.
+
 
 == Note on Patches/Pull Requests
  
@@ -12,6 +214,7 @@ Description goes here.
   (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
+
 == Copyright
 
-Copyright (c) 2010 tcocca. See LICENSE for details.
+Copyright (c) 2010-2011 Tom Cocca. See LICENSE for details.
