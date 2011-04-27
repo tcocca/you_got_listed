@@ -7,7 +7,7 @@ module YouGotListed
       params[:sort_name] ||= "rent"
       params[:sort_dir] ||= "asc"
       params[:detail_level] ||= 2
-      SearchResponse.new(self.client.class.get('/rentals/search.php', :query => params), self.client, params[:page_count])
+      SearchResponse.new(self.client.perform_request(:get, '/rentals/search.php', params), self.client, params[:page_count])
     end
     
     def featured(params = {}, featured_tag = 'Featured Rentals')
@@ -21,7 +21,7 @@ module YouGotListed
     
     def find_by_id(listing_id)
       params = {:listing_id => listing_id, :detail_level => 2}
-      response = SearchResponse.new(self.client.class.get('/rentals/search.php', :query => params), self.client, 20, false)
+      response = SearchResponse.new(self.client.perform_request(:get, '/rentals/search.php', params), self.client, 20)
       (response.success? && response.properties.size > 0) ? response.properties.first : nil
     end
     
@@ -72,7 +72,7 @@ module YouGotListed
       
       attr_accessor :limit, :paginator_cache, :client
       
-      def initialize(response, client, limit = 20, raise_error = true)
+      def initialize(response, client, limit = 20, raise_error = false)
         super(response, raise_error)
         self.limit = limit
         self.client = client

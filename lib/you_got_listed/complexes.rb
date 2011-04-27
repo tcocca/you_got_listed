@@ -7,11 +7,11 @@ module YouGotListed
       params[:sort_name] ||= "Name"
       params[:sort_dir] ||= "asc"
       params[:detail_level] ||= 2
-      SearchResponse.new(self.client.class.get('/complexes/search.php', :query => params), self.client, params[:page_count])
+      SearchResponse.new(self.client.perform_request(:get, '/complexes/search.php', params), self.client, params[:page_count])
     end
     
     def find_by_id(complex_id)
-      response = SearchResponse.new(self.client.class.get('/complexes/search.php', :query => {:complex_id => complex_id}), self.client, 20, false)
+      response = SearchResponse.new(self.client.perform_request(:get, '/complexes/search.php', {:complex_id => complex_id}), self.client, 20)
       (response.success? && response.property_complexes.size > 0) ? response.property_complexes.first : nil
     end
     
@@ -19,7 +19,7 @@ module YouGotListed
       
       attr_accessor :limit, :paginator_cache, :client
       
-      def initialize(response, client, limit = 20, raise_error = true)
+      def initialize(response, client, limit = 20, raise_error = false)
         super(response, raise_error)
         self.limit = limit
         self.client = client

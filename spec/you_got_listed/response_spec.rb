@@ -17,21 +17,6 @@ describe YouGotListed::Response do
     end
   end
   
-  context "should raise errors" do
-    before do
-      @ygl = YouGotListed::Client.new('fake_key')
-      @accounts = YouGotListed::Accounts.new(@ygl)
-    end
-    
-    it "should raise an exception" do
-      lambda {
-        VCR.use_cassette('accounts.search.error') do
-          @response = @accounts.search
-        end
-      }.should raise_exception(YouGotListed::Error, "YouGotListed Error: Invalid key. (code: 998)")
-    end
-  end
-  
   context "should return a response" do
     before do
       @ygl = new_ygl
@@ -76,21 +61,58 @@ describe YouGotListed::Response do
     end
   end
   
-  context "passing raise_errors = false" do
+  context "passing raise_errors = true" do
     before do
       @ygl = new_ygl
       @mocked_response = httparty_get(@ygl.class.base_uri, '/accounts/search.php', 'error.xml', @ygl.class.default_params)
     end
     
-    it "should not raise errors when raise_errors is false" do
+    it "should raise errors when raise_errors is true" do
       lambda {
-        YouGotListed::Response.new(@mocked_response, false)
+        YouGotListed::Response.new(@mocked_response, true)
+      }.should raise_exception(YouGotListed::Error, "YouGotListed Error: Invalid key. (code: 998)")
+    end
+  end
+  
+  context "client timeout error" do
+    before do
+      @ygl = new_ygl
+      YouGotListed::Client.stub!(:get).and_raise(Timeout::Error)
+      @accounts = YouGotListed::Accounts.new(@ygl)
+    end
+    
+    it "should not raise errors" do
+      lambda {
+        @response = @accounts.search
       }.should_not raise_exception
     end
     
     it "should not be a success" do
-      @response = YouGotListed::Response.new(@mocked_response, false)
+      @response = @accounts.search
       @response.success?.should be_false
+      @response.response_code.should == "996"
+      @response.error.should == "Timeout"
+    end
+  end
+  
+  context "client exception" do
+    before do
+      @ygl = new_ygl
+      YouGotListed::Client.stub!(:get).and_raise(Exception)
+      @accounts = YouGotListed::Accounts.new(@ygl)
+    end
+    
+    it "should not raise errors" do
+      lambda {
+        @response = @accounts.search
+      }.should_not raise_exception
+    end
+    
+    it "should not be a success" do
+      @response = @accounts.search
+      @response.success?.should be_false
+      @response.response_code.should == "999"
+      @response.error.should == "Unknown Error"
     end
   end
   

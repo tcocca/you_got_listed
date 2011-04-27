@@ -21,6 +21,6 @@ def httparty_get(base_uri, method, response_fixture, params = {})
   mock_get(base_uri, method, response_fixture, params)
   url = base_uri + method
   VCR.use_cassette(method.gsub('/', '_')) do
-    HTTParty.get url, :format => :xml
+    HTTParty.get url, :format => :xml, :query => params
   end
 end
