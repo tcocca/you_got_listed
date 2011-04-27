@@ -24,6 +24,12 @@ Responses all come back as Hashie::Rash objects (see http://github.com/tcocca/ra
 
 HTTParty parsed the xml into a Hash and Hashie::Rash will convert all keys to underscored names from camel case and then makes the keys accessible as methods.
 
+Responses by default do not raise exceptions if the API errors, but the success? method will return false.
+There are some methods that you can call that will trigger exceptions (typically the ! methods, see below).
+
+Timeout::Errors and other Exceptions are automatically rescued in the YouGotListed::Client class and will return a 
+fake response telling you that there was a timeout or an unknown error in the @response.error method, same as any actual YGL api error messages.
+
 
 === Creating the YouGotListed Client
 
@@ -74,7 +80,7 @@ The YouGotListed::Lead class has 2 methods to create a lead in the YouGotListing
 
 #create will insert a lead and will NOT raise an error if the api returns one
 
-#create! is the exact same by will raise an error
+#create! is the exact same but will raise an error
 
   @leads = YouGotListed::Lead.new(@ygl)
   @leads.create(:first_name => 'Test', :last_name => 'Lead', :email => 'test@lead.com')
