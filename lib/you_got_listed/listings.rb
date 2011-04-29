@@ -46,24 +46,18 @@ module YouGotListed
     
     def find_all_by_ids(listing_ids, include_off_market = true)
       listing_ids = listing_ids.split(',') if listing_ids.is_a?(String)
-      mls_ids = []
-      ygl_ids = []
       all_listings = []
-      listing_ids.each do |list_id|
-        if list_id =~ /[A-Z]{3}-[0-9]{3}-[0-9]{3}/
-          ygl_ids << list_id
-        else
-          mls_ids << list_id
-        end
+      search_params = {}
+      search_params[:include_off_market] = 1 if include_off_market
+      if listing_ids.any?{|list_id| list_id =~ /^[0-9]{8}$/}
+        search_params[:include_mls] = 1
       end
-      ygl_ids.in_groups_of(500, false).each_with_index do |group, index|
-        search_params = {:listing_ids => group.join(','), :page_count => 500, :page_index => (index + 1)}
-        search_params[:include_off_market] = 1 if include_off_market
+      listing_ids.in_groups_of(500, false).each_with_index do |group, index|
         group.delete_if{|x| x.nil?}
-        all_listings << find_all({:listing_ids => group.join(','), :page_count => 500, :page_index => (index + 1)})
-      end
-      mls_ids.each do |mls_id|
-        all_listings << find_by_id(mls_id)
+        search_params[:listing_ids] = group.join(',')
+        search_params[:page_count] = 500
+        search_params[:page_index] = index + 1
+        all_listings << find_all(search_params)
       end
       all_listings.compact.flatten
     end
