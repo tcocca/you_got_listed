@@ -49,7 +49,7 @@ module YouGotListed
       all_listings = []
       search_params = {}
       search_params[:include_off_market] = 1 if include_off_market
-      if listing_ids.any?{|list_id| list_id =~ /^[0-9]{8}$/}
+      if listing_ids.any?{|list_id| list_id !=~ /[A-Z]{3}-[0-9]{3}-[0-9]{3}/}
         search_params[:include_mls] = 1
       end
       listing_ids.in_groups_of(500, false).each_with_index do |group, index|
