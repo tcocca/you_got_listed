@@ -11,7 +11,7 @@ describe YouGotListed::Client do
   end
   
   it "should set the base uri" do
-    @ygl.class.base_uri.should == "https://yougotlistings.com/api"
+    @ygl.class.base_uri.should == "https://www.yougotlistings.com/api"
   end
   
 end

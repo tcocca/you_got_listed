@@ -3,7 +3,7 @@ module YouGotListed
     
     include HTTParty
     format :xml
-    base_uri "https://yougotlistings.com/api"
+    base_uri "https://www.yougotlistings.com/api"
     
     attr_accessor :api_key
     
