@@ -10,7 +10,7 @@ module YouGotListed
     end
     
     def success?
-      self.ygl_response.response_code.to_i < 300
+      self.ygl_response && self.ygl_response.respond_to?(:response_code) && self.ygl_response.response_code.to_i < 300
     end
     
     def method_missing(method_name, *args)
