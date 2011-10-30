@@ -13,9 +13,13 @@ YouGotListings API documentation can be found here: http://www.yougotlistings.co
 
   gem install you_got_listed
 
-In a rails 2.3.x app
+In a rails 3 app  (0.2.x only)
 
-  config.gem 'you_got_listed'
+  gem 'you_got_listed', '~> 0.3.0'
+
+In a rails 2.3.x app  (0.2.x only)
+
+  config.gem 'you_got_listed', :version => '~> 0.2.5'
 
 
 == Usage
