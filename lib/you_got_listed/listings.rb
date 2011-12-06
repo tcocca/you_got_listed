@@ -52,7 +52,7 @@ module YouGotListed
       if listing_ids.any?{|list_id| list_id !=~ /[A-Z]{3}-[0-9]{3}-[0-9]{3}/}
         search_params[:include_mls] = 1
       end
-      # YGL no longer allows you to pass page_count > 10, so we're stuck paging
+      # YGL no longer allows you to pass more than 10 ids at a time
       listing_ids.in_groups_of(10, false).each_with_index do |group, index|
         group.delete_if{|x| x.nil?}
         search_params[:listing_ids] = group.join(',')
