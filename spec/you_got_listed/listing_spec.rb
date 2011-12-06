@@ -81,6 +81,14 @@ describe YouGotListed::Listing do
       @listing.stub!(:pictures).and_return(nil)
       @listing.main_picture.should be_nil
     end
+    
+    it "should return an array if the property has only one photo" do
+      rash = valid_listing_rash
+      rash[:photos].merge!(:photo => 'http://ygl-photos.s3.amazonaws.com/1236380.jpg')
+      @listing = YouGotListed::Listing.new(rash, @ygl)
+      @listing.pictures.is_a?(Array).should be_true
+      @listing.main_picture.should == 'http://ygl-photos.s3.amazonaws.com/1236380.jpg'
+    end
   end
   
   context "latitude" do
