@@ -4,6 +4,7 @@ require 'hashie'
 require 'rash'
 require 'will_paginate/collection'
 require 'active_support/core_ext/array/grouping'
+require 'active_support/core_ext/object/blank'
 
 require 'you_got_listed/client'
 require 'you_got_listed/resource'

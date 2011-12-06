@@ -50,7 +50,7 @@ module YouGotListed
     end
     
     def pictures
-      self.photos.photo unless self.photos.blank? || self.photos.photo.blank?
+      (self.photos.photo.is_a?(Array) ? self.photos.photo : [self.photos.photo])  unless self.photos.blank? || self.photos.photo.blank?
     end
     
     def main_picture
