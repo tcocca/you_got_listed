@@ -56,7 +56,7 @@ describe YouGotListed::Listings do
     end
     
     it "should only return featured properties" do
-      @response.properties.find_all{|p| p.tags && (p.tags.tag.include?('Featured Rentals') || p.tags.tag.include?('Featured'))}.size.should == @response.properties.size
+      @response.properties.find_all{|p| p.tags && p.tags.tag.include?('Featured Rentals')}.size.should == @response.properties.size
     end
   end
   

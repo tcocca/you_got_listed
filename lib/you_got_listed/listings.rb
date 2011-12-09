@@ -10,7 +10,7 @@ module YouGotListed
       SearchResponse.new(self.client.perform_request(:get, '/rentals/search.php', params), self.client, params[:page_count])
     end
     
-    def featured(params = {}, featured_tag = 'Featured Rentals,Featured')
+    def featured(params = {}, featured_tag = 'Featured Rentals')
       if params[:tags].blank?
         params[:tags] = featured_tag
       else
