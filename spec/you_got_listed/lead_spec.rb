@@ -1,14 +1,14 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe YouGotListed::Lead do
-  
+
   before do
     @ygl = new_ygl
     @lead = YouGotListed::Lead.new(@ygl)
     @success_params = {:first_name => "You", :last_name => "GotListed", :email => "ygl@gmail.com"}
     @failed_params = {}
   end
-  
+
   context "create" do
     context "a successful creation" do
       it "should not raise an exception" do
@@ -19,7 +19,7 @@ describe YouGotListed::Lead do
         }.should_not raise_exception
       end
     end
-    
+
     context "a failed creation" do
       it "should raise an exception" do
         lambda {
@@ -30,7 +30,7 @@ describe YouGotListed::Lead do
       end
     end
   end
-  
+
   context "create!" do
     context "a successful creation" do
       it "should not raise an exception" do
@@ -41,7 +41,7 @@ describe YouGotListed::Lead do
         }.should_not raise_exception
       end
     end
-    
+
     context "a failed creation" do
       it "should raise an exception" do
         lambda {
@@ -52,5 +52,5 @@ describe YouGotListed::Lead do
       end
     end
   end
-  
+
 end

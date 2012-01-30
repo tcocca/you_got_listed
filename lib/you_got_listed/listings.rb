@@ -1,6 +1,6 @@
 module YouGotListed
   class Listings < Resource
-    
+
     def search(params = {})
       params[:page_count] ||= 20
       params[:page_index] ||= 1
@@ -9,7 +9,7 @@ module YouGotListed
       params[:detail_level] ||= 2
       SearchResponse.new(self.client.perform_request(:get, '/rentals/search.php', params), self.client, params[:page_count])
     end
-    
+
     def featured(params = {}, featured_tag = 'Featured Rentals')
       if params[:tags].blank?
         params[:tags] = featured_tag
@@ -18,13 +18,13 @@ module YouGotListed
       end
       search(params)
     end
-    
+
     def find_by_id(listing_id)
       params = {:listing_id => listing_id, :detail_level => 2}
       response = SearchResponse.new(self.client.perform_request(:get, '/rentals/search.php', params), self.client, 20)
       (response.success? && response.properties.size > 0) ? response.properties.first : nil
     end
-    
+
     def find_all(params = {})
       params[:page_count] ||= 20
       all_listings = []
@@ -43,7 +43,7 @@ module YouGotListed
       end
       all_listings.flatten
     end
-    
+
     def find_all_by_ids(listing_ids, include_off_market = true)
       listing_ids = listing_ids.split(',') if listing_ids.is_a?(String)
       all_listings = []
@@ -61,19 +61,19 @@ module YouGotListed
       end
       all_listings.compact.flatten
     end
-    
+
     class SearchResponse < YouGotListed::Response
-      
+
       attr_accessor :limit, :paginator_cache, :client
-      
+
       def initialize(response, client, limit = 20, raise_error = false)
         super(response, raise_error)
         self.limit = limit
         self.client = client
       end
-      
+
       def properties
-        return [] if self.ygl_response.listings.blank?
+        return [] if !self.success? || self.ygl_response.listings.blank?
         props = []
         if self.ygl_response.listings.listing.is_a?(Array)
           self.ygl_response.listings.listing.each do |listing|
@@ -84,11 +84,11 @@ module YouGotListed
         end
         props
       end
-      
+
       def mls_results?
         @has_mls_properties ||= properties.any?{|property| property.mls_listing?}
       end
-      
+
       def paginator
         paginator_cache if paginator_cache
         self.paginator_cache = WillPaginate::Collection.create(
@@ -99,6 +99,6 @@ module YouGotListed
         end
       end
     end
-    
+
   end
 end

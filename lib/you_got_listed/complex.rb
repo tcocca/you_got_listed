@@ -1,8 +1,8 @@
 module YouGotListed
   class Complex
-    
+
     attr_accessor :client
-    
+
     def initialize(listing, client)
       listing.each do |key, value|
         self.instance_variable_set('@'+key, value)
@@ -10,7 +10,7 @@ module YouGotListed
       end
       self.client = client
     end
-    
+
     def properties
       return [] if self.listings.blank?
       props = []
@@ -25,11 +25,11 @@ module YouGotListed
       end
       props
     end
-    
+
     def pictures
       self.photos.photo unless self.photos.blank? || self.photos.photo.blank?
     end
-    
+
     def find_address(address_id)
       if addresses.address.is_a?(Array)
         addresses.address.find{|address| address.id == address_id}
@@ -37,6 +37,6 @@ module YouGotListed
         addresses.address
       end
     end
-    
+
   end
 end
