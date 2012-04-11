@@ -13,7 +13,7 @@ module YouGotListed
       self.client = client
     end
 
-    def similar_listings(limit = 6)
+    def similar_listings(limit = 6, search_options = {})
       min_baths = ((self.baths.to_i - 1) <= 0 ? 0 : (self.baths.to_i - 1))
       max_baths = self.baths.to_i + 1
       min_rent = (self.price.to_i * 0.9).to_i
@@ -28,14 +28,16 @@ module YouGotListed
         :max_bed => max_beds,
         :baths => [min_baths, self.baths, max_baths].join(','),
         :city_neighborhood => self.city_neighborhood
-      }
-      similar = []
-      listings = YouGotListed::Listings.new(self.client)
-      listings.search(search_params).properties.each do |prop|
-        similar << prop unless prop.id == self.id
-        break if similar.size == limit
+      }.merge(search_options)
+      @cached_similars ||= begin
+        similar = []
+        listings = YouGotListed::Listings.new(self.client)
+        listings.search(search_params).properties.each do |prop|
+          similar << prop unless prop.id == self.id
+          break if similar.size == limit
+        end
+        similar
       end
-      similar
     end
 
     def town_neighborhood

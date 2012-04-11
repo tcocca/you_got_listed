@@ -61,6 +61,20 @@ describe YouGotListed::Listing do
     end
   end
 
+  context "similar listings with custom params" do
+    before do
+      VCR.use_cassette('listing.similar_listings_custom') do
+        @similar_props = @listing.similar_listings(4, :include_mls => "1")
+      end
+    end
+
+    it "should return an array of listings" do
+      @similar_props.should be_kind_of(Array)
+      @similar_props.should have_at_most(4).listings
+      @similar_props.collect{|x| x.id}.should_not include(@listing.id)
+    end
+  end
+
   context "empty response" do
     before do
       min_baths = ((@listing.baths.to_i - 1) <= 0 ? 0 : (@listing.baths.to_i - 1))
