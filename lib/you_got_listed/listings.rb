@@ -73,16 +73,19 @@ module YouGotListed
       end
 
       def properties
-        return [] if !self.success? || self.ygl_response.listings.blank?
-        props = []
-        if self.ygl_response.listings.listing.is_a?(Array)
-          self.ygl_response.listings.listing.each do |listing|
-            props << YouGotListed::Listing.new(listing, self.client)
+        @cached_properties ||= begin
+          props = []
+          if self.success? && !self.ygl_response.listings.blank?
+            if self.ygl_response.listings.listing.is_a?(Array)
+              self.ygl_response.listings.listing.each do |listing|
+                props << YouGotListed::Listing.new(listing, self.client)
+              end
+            else
+              props << YouGotListed::Listing.new(self.ygl_response.listings.listing, self.client)
+            end
           end
-        else
-          props << YouGotListed::Listing.new(self.ygl_response.listings.listing, self.client)
+          props
         end
-        props
       end
 
       def mls_results?

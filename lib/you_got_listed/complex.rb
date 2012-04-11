@@ -12,18 +12,21 @@ module YouGotListed
     end
 
     def properties
-      return [] if self.listings.blank?
-      props = []
-      if self.listings.listing.is_a?(Array)
-        self.listings.listing.each do |listing|
-          listing = listing.merge(find_address(listing.address_id))
-          props << YouGotListed::Listing.new(listing, self.client)
+      @cached_properties ||= begin
+        props = []
+        unless self.listings.blank?
+          if self.listings.listing.is_a?(Array)
+            self.listings.listing.each do |listing|
+              listing = listing.merge(find_address(listing.address_id))
+              props << YouGotListed::Listing.new(listing, self.client)
+            end
+          else
+            listing = self.listings.listing.merge(find_address(listing.address_id))
+            props << YouGotListed::Listing.new(listing, self.client)
+          end
         end
-      else
-        listing = self.listings.listing.merge(find_address(listing.address_id))
-        props << YouGotListed::Listing.new(listing, self.client)
+        props
       end
-      props
     end
 
     def pictures

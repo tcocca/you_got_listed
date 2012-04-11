@@ -26,16 +26,19 @@ module YouGotListed
       end
 
       def property_complexes
-        return [] if self.ygl_response.complexes.blank?
-        props = []
-        if self.ygl_response.complexes.complex.is_a?(Array)
-          self.ygl_response.complexes.complex.each do |complex|
-            props << YouGotListed::Complex.new(complex, self.client)
+        @cached_property_complexes ||= begin
+          props = []
+          if self.success? && !self.ygl_response.complexes.blank?
+            if self.ygl_response.complexes.complex.is_a?(Array)
+              self.ygl_response.complexes.complex.each do |complex|
+                props << YouGotListed::Complex.new(complex, self.client)
+              end
+            else
+              props << YouGotListed::Complex.new(self.ygl_response.complexes.complex, self.client)
+            end
           end
-        else
-          props << YouGotListed::Complex.new(self.ygl_response.complexes.complex, self.client)
+          props
         end
-        props
       end
 
       def paginator
