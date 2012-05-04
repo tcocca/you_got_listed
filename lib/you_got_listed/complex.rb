@@ -5,8 +5,8 @@ module YouGotListed
 
     def initialize(listing, client)
       listing.each do |key, value|
-        self.instance_variable_set('@'+key, value)
-        self.class.send(:define_method, key, proc{self.instance_variable_get("@#{key}")})
+        self.instance_variable_set("@#{key}", value)
+        self.class.send(:attr_reader, key)
       end
       self.client = client
     end

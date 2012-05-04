@@ -5,9 +5,9 @@ module YouGotListed
 
     def initialize(listing, client)
       listing.each do |key, value|
-        self.instance_variable_set('@'+key, value)
+        self.instance_variable_set("@#{key}", value)
         unless ["latitude", "longitude"].include?(key)
-          self.class.send(:define_method, key, proc{self.instance_variable_get("@#{key}")})
+          self.class.send(:attr_reader, key)
         end
       end
       self.client = client
