@@ -17,7 +17,7 @@ module YouGotListed
 
     class SearchResponse < YouGotListed::Response
 
-      attr_accessor :limit, :paginator_cache, :client
+      attr_accessor :limit, :client
 
       def initialize(response, client, limit = 20, raise_error = false)
         super(response, raise_error)
@@ -42,10 +42,9 @@ module YouGotListed
       end
 
       def paginator
-        paginator_cache if paginator_cache
-        self.paginator_cache = WillPaginate::Collection.create(
-          (self.ygl_response.page_index ? self.ygl_response.page_index : 1), 
-          self.limit, 
+        @paginator_cache ||= WillPaginate::Collection.create(
+          (self.ygl_response.page_index ? self.ygl_response.page_index : 1),
+          self.limit,
           (self.ygl_response.total ? self.ygl_response.total : properties.size)) do |pager|
           pager.replace property_complexes
         end
