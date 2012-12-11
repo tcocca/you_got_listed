@@ -4,6 +4,10 @@ def new_ygl
   YouGotListed::Client.new(YGL_API_KEY)
 end
 
+def new_ygl_timeout_5
+  YouGotListed::Client.new(YGL_API_KEY, 5)
+end
+
 def mock_get(base_uri, method, response_fixture, params = {})
   url = base_uri + method
   unless params.blank?
