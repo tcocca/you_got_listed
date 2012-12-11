@@ -15,7 +15,7 @@ YouGotListings API documentation can be found here: http://www.yougotlistings.co
 
 In a rails 3 app
 
-  gem 'you_got_listed', '~> 0.4.0'
+  gem 'you_got_listed', '~> 0.5.0'
 
 In a rails 2.3.x app  (0.2.x only)
 
@@ -42,6 +42,11 @@ A client object is necessary for each request type.  The client is the base clas
   @ygl = YouGotListed::Client.new('you_api_key')
 
 ** For all operations the "key" required parameter is automatically passed so you never need to worry about this parameter as the client class includes it by default.
+
+There is also an optional parameter to set the timeout in seconds, passing this will raise a Timeout::Error after that number of seconds
+
+  @ygl = YouGotListed::Client.new('you_api_key', 5)  # raises a Timeout::Error after 5 seconds with no response
+
 
 === Searching Accounts
 
