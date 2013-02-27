@@ -52,11 +52,9 @@ module YouGotListed
       if listing_ids.any?{|list_id| list_id !=~ /[A-Z]{3}-[0-9]{3}-[0-9]{3}/}
         search_params[:include_mls] = 1
       end
-      # YGL no longer allows you to pass more than 10 ids at a time
-      listing_ids.in_groups_of(10, false).each_with_index do |group, index|
+      listing_ids.in_groups_of(20, false).each do |group|
         group.delete_if{|x| x.nil?}
         search_params[:listing_ids] = group.join(',')
-        search_params[:page_index] = index + 1
         all_listings << find_all(search_params)
       end
       all_listings.compact.flatten
