@@ -12,21 +12,28 @@ module YouGotListed
       end
       self.client = client
     end
+    
+    def similar_listings_criteria
+      {
+        :price_low => (self.price.to_i * 0.9).to_i,
+        :price_high => (self.price.to_i * 1.1).to_i,
+        :min_beds => ((self.beds.to_i - 1) <= 0 ? 0 : (self.beds.to_i - 1)),
+        :max_beds => self.beds.to_i + 1,
+        :min_baths => ((self.baths.to_i - 1) <= 0 ? 0 : (self.baths.to_i - 1)),
+        :max_baths => self.baths.to_i + 1,
+        :towns => self.city_neighborhood
+      }
+    end
 
     def similar_listings(limit = 6, search_options = {})
-      min_baths = ((self.baths.to_i - 1) <= 0 ? 0 : (self.baths.to_i - 1))
-      max_baths = self.baths.to_i + 1
-      min_rent = (self.price.to_i * 0.9).to_i
-      max_rent = (self.price.to_i * 1.1).to_i
-      min_beds = ((self.beds.to_i - 1) <= 0 ? 0 : (self.beds.to_i - 1))
-      max_beds = self.beds.to_i + 1
+      criteria = similar_listings_criteria
       search_params = {
         :limit => limit + 1,
-        :min_rent => min_rent,
-        :max_rent => max_rent,
-        :min_bed => min_beds,
-        :max_bed => max_beds,
-        :baths => [min_baths, self.baths, max_baths].join(','),
+        :min_rent => criteria[:price_low],
+        :max_rent => criteria[:price_high],
+        :min_bed => criteria[:min_beds],
+        :max_bed => criteria[:max_beds],
+        :baths => [criteria[:min_baths], self.baths, criteria[:max_baths]].join(','),
         :city_neighborhood => self.city_neighborhood
       }.merge(search_options)
       @cached_similars ||= begin

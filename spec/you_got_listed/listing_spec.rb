@@ -32,6 +32,19 @@ describe YouGotListed::Listing do
   it "should return photos for pictures" do
     @listing.pictures.should == @listing.photos.photo
   end
+  
+  it "should return similar listings criteria" do
+    @listing.similar_listings_criteria.should == 
+      {
+        :towns=>"Boston:Fenway",
+        :min_baths=>0,
+        :min_beds=>0,
+        :max_baths=>2,
+        :max_beds=>1,
+        :price_low=>720,
+        :price_high=>880
+      }
+  end
 
   context "default similar listings" do
     before do
