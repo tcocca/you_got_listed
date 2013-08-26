@@ -15,7 +15,7 @@ YouGotListings API documentation can be found here: http://www.yougotlistings.co
 
 In a rails 3 app
 
-  gem 'you_got_listed', '~> 0.5.1'
+  gem 'you_got_listed', '~> 0.6.1'
 
 In a rails 2.3.x app  (0.2.x only)
 
