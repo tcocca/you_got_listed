@@ -6,7 +6,7 @@ You must have access to the YouGotListings API via an api key.
 
 Currently the gem supports a subset of the full YouGotListings api and is READ-ONLY wrapper with the exception of creating Leads.
 
-YouGotListings API documentation can be found here: http://www.yougotlistings.com/wiki/index.php/Developers
+YouGotListings API documentation can be found here: http://support.yougotlistings.com/knowledgebase/articles/224954-ygl-api-general-info
 
 
 == Installation
