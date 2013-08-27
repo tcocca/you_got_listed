@@ -11,6 +11,22 @@ module YouGotListed
       self.http_timeout = http_timeout
       self.class.default_params :key => api_key
     end
+    
+    def listings
+      @listings ||= YouGotListed::Listings.new(self)
+    end
+
+    def leads
+      @leads ||= YouGotListed::Lead.new(self)
+    end
+    
+    def agents
+      @agents ||= YouGotListed::Agent.new(self)
+    end
+    
+    def accounts
+      @agents ||= YouGotListed::Accounts.new(self)
+    end
 
     def perform_request(http_method, path, params = {})
       begin
