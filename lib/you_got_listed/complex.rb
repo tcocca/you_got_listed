@@ -14,7 +14,7 @@ module YouGotListed
     def properties
       @cached_properties ||= begin
         props = []
-        unless self.listings.blank?
+        if defined?(self.listings) && !self.listings.blank?
           if self.listings.listing.is_a?(Array)
             self.listings.listing.each do |listing|
               listing = listing.merge(find_address(listing.address_id))
