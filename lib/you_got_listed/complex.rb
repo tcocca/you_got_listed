@@ -21,7 +21,7 @@ module YouGotListed
               props << YouGotListed::Listing.new(listing, self.client)
             end
           else
-            listing = self.listings.listing.merge(find_address(listing.address_id))
+            listing = self.listings.listing.merge(find_address(self.listings.listing.address_id))
             props << YouGotListed::Listing.new(listing, self.client)
           end
         end
