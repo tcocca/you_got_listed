@@ -35,7 +35,11 @@ module YouGotListed
 
     def find_address(address_id)
       if addresses.address.is_a?(Array)
-        addresses.address.find{|address| address.id == address_id}
+        if address_id.blank?
+          addresses.address.first
+        else
+          addresses.address.find{|address| address.id == address_id}
+        end
       else
         addresses.address
       end
