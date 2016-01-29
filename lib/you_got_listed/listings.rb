@@ -20,7 +20,8 @@ module YouGotListed
     end
 
     def find_by_id(listing_id)
-      params = {:listing_id => listing_id, :detail_level => 2}
+      listing_id_key = listing_id.to_s.match(/7\d{7}/) ? :external_id : :listing_id
+      params = {listing_id_key => listing_id, :detail_level => 2}
       response = SearchResponse.new(self.client.perform_request(:get, '/rentals/search.php', params), self.client, 20)
       (response.success? && response.properties.size > 0) ? response.properties.first : nil
     end
