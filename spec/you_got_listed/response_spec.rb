@@ -35,7 +35,7 @@ describe YouGotListed::Response do
       VCR.use_cassette('accounts.search') do
         @response = @accounts.search
       end
-      @response.success?.should be_true
+      @response.success?.should be true
       @response.ygl_response.should_not be_nil
       @response.ygl_response.should be_kind_of(Hashie::Rash)
     end
@@ -51,7 +51,7 @@ describe YouGotListed::Response do
     end
 
     it "should allow response.ygl_response methods to be called on response" do
-      body = stub(:total_count => 25)
+      body = double('YGL Response', :total_count => 25)
       @response.ygl_response = body
       @response.total_count.should == 25
     end
@@ -105,7 +105,7 @@ describe YouGotListed::Response do
   context "client timeout error" do
     before do
       @ygl = new_ygl
-      YouGotListed::Client.stub!(:get).and_raise(Timeout::Error)
+      YouGotListed::Client.should_receive(:get).and_raise(Timeout::Error)
       @accounts = YouGotListed::Accounts.new(@ygl)
     end
 
@@ -117,7 +117,7 @@ describe YouGotListed::Response do
 
     it "should not be a success" do
       @response = @accounts.search
-      @response.success?.should be_false
+      @response.success?.should be false
       @response.response_code.should == "996"
       @response.error.should == "Timeout"
     end
@@ -126,7 +126,7 @@ describe YouGotListed::Response do
   context "client exception" do
     before do
       @ygl = new_ygl
-      YouGotListed::Client.stub!(:get).and_raise(Exception)
+      YouGotListed::Client.should_receive(:get).and_raise(Exception)
       @accounts = YouGotListed::Accounts.new(@ygl)
     end
 
@@ -138,7 +138,7 @@ describe YouGotListed::Response do
 
     it "should not be a success" do
       @response = @accounts.search
-      @response.success?.should be_false
+      @response.success?.should be false
       @response.response_code.should == "999"
       @response.error.should == "Unknown Error"
     end

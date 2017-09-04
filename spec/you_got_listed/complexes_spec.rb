@@ -15,7 +15,7 @@ describe YouGotListed::Complexes do
     end
 
     it { @response.should be_kind_of(YouGotListed::Complexes::SearchResponse) }
-    it { @response.success?.should be_true }
+    it { @response.success?.should be true }
 
     context "search response" do
       it { @response.should be_kind_of(YouGotListed::Response) }

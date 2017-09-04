@@ -15,7 +15,7 @@ describe YouGotListed::Listings do
     end
 
     it { @response.should be_kind_of(YouGotListed::Listings::SearchResponse) }
-    it { @response.success?.should be_true }
+    it { @response.success?.should be true }
 
     context "search response" do
       it { @response.should be_kind_of(YouGotListed::Response) }
@@ -75,17 +75,17 @@ describe YouGotListed::Listings do
     before do
       VCR.use_cassette('listings.mls_search') do
         @response = @listings.search(:include_mls => "1")
-        @response.properties.first.stub!(:source).and_return('MLS')
+        # @response.properties.first.should_receive(:source).and_return('MLS')
       end
     end
 
     context "search response" do
-      it { @response.mls_results?.should be_true }
+      it { @response.mls_results?.should be true }
     end
   end
 
   context "featured" do
-    before do 
+    before do
       VCR.use_cassette('listings.featured') do
         @response = @listings.featured
       end
