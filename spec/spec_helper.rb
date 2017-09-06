@@ -8,11 +8,11 @@ require 'vcr'
 Dir[File.expand_path(File.join(File.dirname(__FILE__),'support','**','*.rb'))].each {|f| require f}
 
 RSpec.configure do |config|
-  
+
 end
 
-VCR.config do |c|
+VCR.configure do |c|
   c.cassette_library_dir = 'spec/fixtures/vcr_cassettes'
-  c.stub_with :webmock
+  c.hook_into :webmock
   c.default_cassette_options = { :record => :new_episodes }
 end

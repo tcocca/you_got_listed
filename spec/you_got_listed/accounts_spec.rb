@@ -15,7 +15,7 @@ describe YouGotListed::Accounts do
     end
 
     it "should be a success" do
-      @response.success?.should be_true
+      @response.success?.should be true
     end
 
     it "should set accounts on the response" do
