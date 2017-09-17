@@ -11,6 +11,7 @@ module YouGotListed
     end
 
     def featured(params = {}, featured_tag = 'Featured Rentals')
+      featured_tag = 'Featured Rentals' if featured_tag.blank?
       if params[:tags].blank?
         params[:tags] = featured_tag
       else
