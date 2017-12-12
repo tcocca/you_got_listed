@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version     = '>= 2.0.0'
 
-  s.add_dependency "activesupport", "~> 3"
+  s.add_dependency "activesupport", ">= 3"
   s.add_dependency "httparty", "~> 0.12.0"
   s.add_dependency "rash", "~> 0.4.0"
   s.add_dependency "will_paginate", ">= 3"
