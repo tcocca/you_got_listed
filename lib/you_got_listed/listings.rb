@@ -35,7 +35,7 @@ module YouGotListed
         total_pages = (response.ygl_response.total.to_i/params[:page_count].to_f).ceil
         if total_pages > 1
           (2..total_pages).each do |page_num|
-            resp = search(params.merge(:page => page_num))
+            resp = search(params.merge(:page_index => page_num))
             if resp.success?
               all_listings << resp.properties
             end
