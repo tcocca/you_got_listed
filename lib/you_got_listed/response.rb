@@ -9,7 +9,7 @@ module YouGotListed
           self.ygl_response = nil
           raise Error.new('empty_response', 'Empty Response') if raise_error
         else
-          rash = Hashie::Rash.new(response)
+          rash = Hashie::Mash::Rash.new(response)
           self.ygl_response = rash.ygl_response
           if !success? && raise_error
             if self.ygl_response.respond_to?(:response_code)
